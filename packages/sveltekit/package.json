@@ -1,8 +1,8 @@
 {
   "name": "@nxext/sveltekit",
-  "version": "16.5.0-next.1",
+  "version": "16.6.0-next.0",
   "license": "MIT",
-  "author": "Kristian Mandrup",
+  "author": "Dominik Pieper",
   "description": "Nx plugin for Sveltekit",
   "homepage": "https://nxext.dev/",
   "keywords": [
@@ -21,6 +21,14 @@
   "generators": "./generators.json",
   "executors": "./executors.json",
   "dependencies": {
-    "@nx/devkit": "^16.5.0"
+    "tslib": "^2.3.0",
+    "@nx/devkit": "^16.6.0",
+    "typescript": "5.1.6"
+  },
+  "peerDependencies": {
+    "nx": "^16.6.0",
+    "@nx/workspace": "^16.6.0",
+    "@nx/linter": "^16.6.0",
+    "@nx/vite": "^16.6.0"
   }
 }
