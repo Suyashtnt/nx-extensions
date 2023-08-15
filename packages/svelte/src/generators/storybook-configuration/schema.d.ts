@@ -1,4 +1,4 @@
-import { Linter } from '@nrwl/linter';
+import { Linter } from '@nx/linter';
 
 export interface StorybookConfigureSchema {
   name: string;
@@ -7,4 +7,6 @@ export interface StorybookConfigureSchema {
   js?: boolean;
   cypressDirectory?: string;
   standaloneConfig?: boolean;
+  tsConfiguration?: boolean;
+  configureTestRunner?: boolean;
 }

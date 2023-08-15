@@ -1,10 +1,11 @@
 import { PreactApplicationSchema } from './schema';
-import { Linter } from '@nrwl/linter';
+import { Linter } from '@nx/linter';
 import applicationGenerator from './application';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { Tree } from '@nx/devkit';
 
 describe('Preact app schematic', () => {
-  let tree;
+  let host: Tree;
   const options: PreactApplicationSchema = {
     name: 'test',
     linter: Linter.EsLint,
@@ -13,26 +14,14 @@ describe('Preact app schematic', () => {
   };
 
   beforeEach(() => {
-    tree = createTreeWithEmptyWorkspace();
-    tree.overwrite(
-      'package.json',
-      `
-      {
-        "name": "test-name",
-        "dependencies": {},
-        "devDependencies": {
-          "@nrwl/workspace": "0.0.0"
-        }
-      }
-    `
-    );
+    host = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
   });
 
   describe('Vite bundle', () => {
     it('should add vite specific files', async () => {
-      await applicationGenerator(tree, { ...options });
-      expect(tree.exists(`apps/${options.name}/public/index.html`)).toBeFalsy();
-      expect(tree.exists(`apps/${options.name}/index.html`)).toBeTruthy();
+      await applicationGenerator(host, { ...options });
+      expect(host.exists(`apps/${options.name}/public/index.html`)).toBeFalsy();
+      expect(host.exists(`apps/${options.name}/index.html`)).toBeTruthy();
     });
   });
 });

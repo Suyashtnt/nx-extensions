@@ -1,10 +1,18 @@
 import componentGenerator, { ComponentSchema } from './component';
-import { createTestUILib } from '../../utils/testing';
+import { createTestUILib, testNpmScope } from '../../utils/testing';
 import { SupportedStyles } from '../../stencil-core-utils';
-import { Tree } from '@nrwl/devkit';
+import { names, Tree } from '@nx/devkit';
 import storybookConfigurationGenerator from '../storybook-configuration/generator';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const devkit = require('@nx/devkit');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const readNxVersionModule = require('../../utils/utillities');
+
 describe('component schematic', () => {
+  jest.spyOn(devkit, 'ensurePackage').mockReturnValue(Promise.resolve());
+  jest.spyOn(readNxVersionModule, 'readNxVersion').mockReturnValue('15.7.0');
+
   let tree: Tree;
   const projectName = 'test-project';
   const options: ComponentSchema = {
@@ -41,7 +49,7 @@ describe('component schematic', () => {
     ).toBeTruthy();
     expect(
       tree.exists(
-        'libs/test-project/src/components/test-component/test-component.stories.ts'
+        'libs/test-project/src/components/test-component/test-component.stories.tsx'
       )
     ).toBeFalsy();
   });
@@ -75,7 +83,10 @@ describe('component schematic', () => {
   });
 
   it('should generate files with storybook enabled', async () => {
-    await storybookConfigurationGenerator(tree, { name: projectName, configureCypress: false });
+    await storybookConfigurationGenerator(tree, {
+      name: projectName,
+      configureCypress: false,
+    });
     await componentGenerator(tree, options);
 
     expect(
@@ -100,8 +111,45 @@ describe('component schematic', () => {
     ).toBeTruthy();
     expect(
       tree.exists(
-        'libs/test-project/src/components/test-component/test-component.stories.jsx'
+        'libs/test-project/src/components/test-component/test-component.stories.tsx'
       )
     ).toBeTruthy();
+  });
+
+  describe('generated stories.tsx file import statement', () => {
+    let classPathValue: string;
+    let className: string;
+    let contents: string;
+
+    const generate = async () => {
+      await storybookConfigurationGenerator(tree, {
+        name: projectName,
+        configureCypress: false,
+      });
+      await componentGenerator(tree, options);
+
+      classPathValue = `@${testNpmScope}/${options.project}/${options.name}`;
+      className = names(options.name).className;
+      contents = tree.read(
+        'libs/test-project/src/components/test-component/test-component.stories.tsx',
+        'utf-8'
+      );
+    };
+
+    it('should set class name portion of import statement', async () => {
+      await generate();
+      expect(contents).toContain(className);
+    });
+
+    it('should set path portion of import statement', async () => {
+      await generate();
+      expect(contents).toContain(classPathValue);
+    });
+
+    it('should insert constructed import statement', async () => {
+      await generate();
+      const importStatement = `import { ${className} } from '${classPathValue}`;
+      expect(contents).toContain(importStatement);
+    });
   });
 });

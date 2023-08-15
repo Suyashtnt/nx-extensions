@@ -2,8 +2,13 @@ import { STYLE_PLUGIN_DEPENDENCIES } from '../../utils/typings';
 import { fileListForAppType } from '../../utils/testing';
 import { SupportedStyles } from '../../stencil-core-utils';
 import { RawLibrarySchema } from './schema';
-import { readJson, readProjectConfiguration, Tree } from '@nrwl/devkit';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+import {
+  readJson,
+  readProjectConfiguration,
+  Tree,
+  updateJson,
+} from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { libraryGenerator } from './generator';
 
 describe('library', () => {
@@ -18,7 +23,13 @@ describe('library', () => {
   };
 
   beforeEach(() => {
-    host = createTreeWithEmptyWorkspace();
+    host = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
+    updateJson(host, '/package.json', (json) => {
+      json.devDependencies = {
+        '@nx/workspace': '15.7.0',
+      };
+      return json;
+    });
   });
 
   it('should add tags to nx.json', async () => {

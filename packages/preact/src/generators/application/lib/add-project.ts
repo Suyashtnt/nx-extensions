@@ -1,16 +1,13 @@
 import { NormalizedSchema } from '../schema';
-import { ProjectType } from '@nrwl/workspace';
-import { addProjectConfiguration, Tree } from '@nrwl/devkit';
-import { createViteTargets } from './project/vite';
+import { addProjectConfiguration, Tree } from '@nx/devkit';
+import { createLintTarget } from './create-lint-target';
 
 export function addProject(tree: Tree, options: NormalizedSchema) {
-  const targets = createViteTargets(options);
-
   addProjectConfiguration(tree, options.name, {
     root: options.projectRoot,
     sourceRoot: `${options.projectRoot}/src`,
-    projectType: ProjectType.Application,
+    projectType: 'application',
     tags: options.parsedTags,
-    targets,
+    targets: { lint: createLintTarget(options) },
   });
 }

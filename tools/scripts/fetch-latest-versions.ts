@@ -8,21 +8,16 @@ import {
   stencilVersion,
 } from '../../packages/stencil/src/utils/versions';
 import {
-  c8Version,
-  vitestVersion,
-} from '../../packages/vitest/src/utils/versions';
-import {
   eslintPluginSvelteVersion,
   svelteCheckVersion,
   svelteJesterVersion,
+  svelteLoaderVersion,
   sveltePreprocessVersion,
   svelteVersion,
   testingLibrarySvelteVersion,
   tsconfigSvelteVersion,
   vitePluginSvelteVersion,
 } from '../../packages/svelte/src/generators/utils/versions';
-import { viteVersion } from '../../packages/vite/src/utils/version';
-import { vitePluginReactVersion } from '../../packages/react/src/generators/utils/versions';
 import {
   eslintPluginSolidVersion,
   solidJestVersion,
@@ -36,6 +31,17 @@ import {
   testingLibraryPreactVersion,
   vitePluginPreactVersion,
 } from '../../packages/preact/src/generators/utils/versions';
+import { capacitorVersion } from '../../packages/capacitor/src/utils/versions';
+import {
+  vueRouterVersion,
+  vueTestUtilsVersion,
+  vueTscVersion,
+  vueVersion,
+  vitePluginVueVersion,
+  eslintPluginVueVersion,
+  eslintPluginPrettierVueVersion,
+  eslintPluginTypescriptVueVersion,
+} from '../../packages/vue/src/generators/utils/versions';
 
 console.log('======================================');
 console.log('Stencil:');
@@ -87,34 +93,10 @@ const sveltepkgs = [
   { pkg: '@testing-library/svelte', version: testingLibrarySvelteVersion },
   { pkg: '@sveltejs/vite-plugin-svelte', version: vitePluginSvelteVersion },
   { pkg: 'eslint-plugin-svelte3', version: eslintPluginSvelteVersion },
+  { pkg: 'svelte-loader', version: svelteLoaderVersion },
 ];
 
 sveltepkgs.forEach(({ pkg, version }) => {
-  checkVersion(pkg, version);
-});
-
-console.log('======================================');
-console.log('Vite:');
-console.log('======================================');
-
-const vitePkgs = [
-  { pkg: 'vite', version: viteVersion },
-  { pkg: 'vite-tsconfig-paths', version: '3.4.0' },
-];
-
-vitePkgs.forEach(({ pkg, version }) => {
-  checkVersion(pkg, version);
-});
-
-console.log('======================================');
-console.log('React:');
-console.log('======================================');
-
-const reactPkgs = [
-  { pkg: '@vitejs/plugin-react', version: vitePluginReactVersion },
-];
-
-reactPkgs.forEach(({ pkg, version }) => {
   checkVersion(pkg, version);
 });
 
@@ -150,15 +132,43 @@ solidPkgs.forEach(({ pkg, version }) => {
 });
 
 console.log('======================================');
-console.log('Vitest:');
+console.log('Capacitor:');
 console.log('======================================');
 
-const vitestPkgs = [
-  { pkg: 'vitest', version: vitestVersion },
-  { pkg: 'c8', version: c8Version },
+const capacitorPkgs = [
+  { pkg: '@capacitor/core', version: capacitorVersion },
+  { pkg: '@capacitor/android', version: capacitorVersion },
+  { pkg: '@capacitor/ios', version: capacitorVersion },
+  { pkg: '@capacitor/cli', version: capacitorVersion },
 ];
 
-vitestPkgs.forEach(({ pkg, version }) => {
+capacitorPkgs.forEach(({ pkg, version }) => {
+  checkVersion(pkg, version);
+});
+
+console.log('======================================');
+console.log('Vue:');
+console.log('======================================');
+
+const vuePkgs = [
+  { pkg: 'vue-router', version: vueRouterVersion },
+  { pkg: '@vue/test-utils', version: vueTestUtilsVersion },
+  { pkg: 'vue-tsc', version: vueTscVersion },
+  { pkg: 'vue', version: vueVersion },
+  { pkg: '@vitejs/plugin-vue', version: vitePluginVueVersion },
+
+  { pkg: 'eslint-plugin-vue', version: eslintPluginVueVersion },
+  {
+    pkg: '@vue/eslint-config-prettier',
+    version: eslintPluginPrettierVueVersion,
+  },
+  {
+    pkg: '@vue/eslint-config-typescript',
+    version: eslintPluginTypescriptVueVersion,
+  },
+];
+
+vuePkgs.forEach(({ pkg, version }) => {
   checkVersion(pkg, version);
 });
 

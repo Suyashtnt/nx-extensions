@@ -1,11 +1,11 @@
-import { Linter } from '@nrwl/linter';
+import { Linter } from '@nx/linter';
 
 export interface PreactLibrarySchema {
   name: string;
   tags?: string;
 
   linter: Linter;
-  unitTestRunner: 'jest' | 'none';
+  unitTestRunner: 'vitest' | 'jest' | 'none';
   e2eTestRunner: 'cypress' | 'none';
   buildable?: boolean;
   directory?: string;

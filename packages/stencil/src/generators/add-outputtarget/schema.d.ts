@@ -7,6 +7,6 @@ export interface AddOutputtargetSchematicSchema {
   outputType: OutputTargetType;
   publishable: boolean;
   importPath?: string;
-  unitTestRunner: 'jest' | 'none',
+  unitTestRunner: 'jest' | 'none';
   skipFormat: boolean;
 }

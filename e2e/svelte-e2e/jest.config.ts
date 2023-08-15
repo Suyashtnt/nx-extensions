@@ -1,16 +1,11 @@
-module.exports = {
-  name: 'svelte-e2e',
-
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
-    },
-  },
+export default {
+  displayName: 'svelte-e2e',
+  preset: '../../jest.preset.js',
   transform: {
-    '^.+\\.[tj]s$': 'ts-jest',
+    '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/e2e/svelte-e2e',
-  maxWorkers: 1,
-  preset: '../../jest.preset.ts',
+  globalSetup: '../../tools/scripts/start-local-registry.ts',
+  globalTeardown: '../../tools/scripts/stop-local-registry.ts',
 };

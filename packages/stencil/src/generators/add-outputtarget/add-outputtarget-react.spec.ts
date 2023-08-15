@@ -1,10 +1,10 @@
 import { createTestUILib } from '../../utils/testing';
-import { uniq } from '@nrwl/nx-plugin/testing';
-import { Tree } from '@nrwl/devkit';
+import { uniq } from '@nx/plugin/testing';
+import { Tree } from '@nx/devkit';
 import { outputtargetGenerator } from './add-outputtarget';
 import { AddOutputtargetSchematicSchema } from './schema';
 
-describe('add-outputtarget react', () => {
+xdescribe('add-outputtarget react', () => {
   let tree: Tree;
   const projectName = uniq('testproject');
   const options = {

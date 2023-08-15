@@ -9,8 +9,8 @@ import {
   readProjectConfiguration,
   StringChange,
   Tree,
-} from '@nrwl/devkit';
-import { findNodes } from '@nrwl/workspace/src/utils/ast-utils';
+} from '@nx/devkit';
+import { findNodes } from 'nx/src/utils/typescript';
 
 export function addExportsToBarrel(tree: Tree, options: SolidComponentSchema) {
   const projectConfig = readProjectConfiguration(tree, options.project);
@@ -19,7 +19,7 @@ export function addExportsToBarrel(tree: Tree, options: SolidComponentSchema) {
   const indexFilePath = joinPathFragments(projectConfig.sourceRoot, 'index.ts');
   const componentFile = `./components/${fileName}/${className}.ts`;
 
-  if (projectConfig.projectType === "library") {
+  if (projectConfig.projectType === 'library') {
     const { content, source } = readSourceFile(tree, indexFilePath);
 
     const changes = applyChangesToString(

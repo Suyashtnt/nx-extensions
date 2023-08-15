@@ -1,29 +1,9 @@
-import {
-  GeneratorCallback,
-  Tree,
-  addDependenciesToPackageJson,
-} from '@nrwl/devkit';
-import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
-import { hasNxPackage, readNxVersion } from './util';
-import { cypressInitGenerator } from '@nrwl/cypress';
+import { GeneratorCallback, Tree, ensurePackage, NX_VERSION } from '@nx/devkit';
 
-export function addCypressPlugin(tree: Tree): GeneratorCallback {
-  const tasks: GeneratorCallback[] = [];
-  const hasNrwlCypressDependency: boolean = hasNxPackage(tree, '@nrwl/cypress');
-
-  if (!hasNrwlCypressDependency) {
-    const nxVersion = readNxVersion(tree);
-
-    const installTask = addDependenciesToPackageJson(
-      tree,
-      {},
-      { '@nrwl/cypress': nxVersion }
-    );
-    tasks.push(installTask);
-  }
-
-  const cypressTask = cypressInitGenerator(tree, {});
-  tasks.push(cypressTask);
-
-  return runTasksInSerial(...tasks);
+export async function addCypressPlugin(tree: Tree): Promise<GeneratorCallback> {
+  const { cypressInitGenerator } = ensurePackage<typeof import('@nx/cypress')>(
+    '@nx/cypress',
+    NX_VERSION
+  );
+  return await cypressInitGenerator(tree, {});
 }

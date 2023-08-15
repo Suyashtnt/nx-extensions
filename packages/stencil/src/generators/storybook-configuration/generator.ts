@@ -1,37 +1,52 @@
 import {
   convertNxGenerator,
+  ensurePackage,
   formatFiles,
+  generateFiles,
   GeneratorCallback,
+  getWorkspaceLayout,
   joinPathFragments,
   logger,
+  NX_VERSION,
+  offsetFromRoot,
   readJson,
   readProjectConfiguration,
+  stripIndents,
   Tree,
   updateProjectConfiguration,
   writeJson,
-  generateFiles,
-  offsetFromRoot,
-  stripIndents,
-} from '@nrwl/devkit';
-import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
-import { Linter } from '@nrwl/linter';
+  runTasksInSerial,
+} from '@nx/devkit';
+import { Linter } from '@nx/linter';
+import { TsConfig } from '@nx/storybook/src/utils/utilities';
+import { getRootTsConfigPathInTree } from '@nx/workspace/src/utilities/typescript';
 import { join } from 'path';
-import { cypressProjectGenerator } from '@nrwl/storybook';
-import { initGenerator } from '@nrwl/storybook/src/generators/init/init';
-import { TsConfig } from '@nrwl/storybook/src/utils/utilities';
-import { StorybookConfigureSchema } from './schema';
-import { updateLintConfig } from './lib/update-lint-config';
 import { isBuildableStencilProject } from '../../utils/utillities';
+import { updateDependencies } from './lib/add-dependencies';
+import { updateLintConfig } from './lib/update-lint-config';
+import { StorybookConfigureSchema } from './schema';
+
+/**
+ * With Nx `npmScope` (eg: nx-workspace) and `projectName` (eg: nx-project), returns a path portion to be used for import statements or
+ * a tsconfig.json `paths` entry.
+ *
+ * @example `@nx-workspace/nx-project`
+ * @returns path portion of an import statement
+ */
+export function getProjectTsImportPath(tree: Tree, projectName: string) {
+  const workspaceLayout = getWorkspaceLayout(tree);
+  return `@${workspaceLayout.npmScope}/${projectName}`;
+}
 
 export async function storybookConfigurationGenerator(
-  tree: Tree,
+  host: Tree,
   rawSchema: StorybookConfigureSchema
 ) {
   const tasks: GeneratorCallback[] = [];
-  const uiFramework = '@storybook/html';
+  const uiFramework = '@storybook/html-webpack5';
   const options = normalizeSchema(rawSchema);
 
-  const projectConfig = readProjectConfiguration(tree, options.name);
+  const projectConfig = readProjectConfiguration(host, options.name);
 
   if (!isBuildableStencilProject(projectConfig)) {
     logger.info(stripIndents`
@@ -49,20 +64,29 @@ export async function storybookConfigurationGenerator(
     return;
   }
 
-  const initTask = await initGenerator(tree, {
+  await ensurePackage('@nx/storybook', NX_VERSION);
+  const { initGenerator } = await import(
+    '@nx/storybook/src/generators/init/init'
+  );
+
+  const initTask = await initGenerator(host, {
     uiFramework: uiFramework,
   });
   tasks.push(initTask);
 
-  createRootStorybookDir(tree);
-  createProjectStorybookDir(tree, options.name, uiFramework);
-  configureTsProjectConfig(tree, options);
-  configureTsSolutionConfig(tree, options);
-  updateLintConfig(tree, options);
-  addStorybookTask(tree, options.name, uiFramework);
+  createRootStorybookDir(host);
+  createProjectStorybookDir(host, options.name, uiFramework);
+  configureTsProjectConfig(host, options);
+  configureTsSolutionConfig(host);
+  updateLintConfig(host, options);
+  addStorybookTask(host, options.name, uiFramework);
+  updateDependencies(host);
+
   if (options.configureCypress) {
+    await ensurePackage('@nx/storybook', NX_VERSION);
+    const { cypressProjectGenerator } = await import('@nx/storybook');
     if (projectConfig.projectType !== 'application') {
-      const cypressTask = await cypressProjectGenerator(tree, {
+      const cypressTask = await cypressProjectGenerator(host, {
         name: options.name,
         js: false,
         linter: options.linter,
@@ -75,7 +99,7 @@ export async function storybookConfigurationGenerator(
     }
   }
 
-  await formatFiles(tree);
+  await formatFiles(host);
 
   return runTasksInSerial(...tasks);
 }
@@ -127,8 +151,10 @@ export function createProjectStorybookDir(
     dot: '.',
     uiFramework,
     offsetFromRoot: offset,
+    rootTsConfigPath: getRootTsConfigPathInTree(tree),
     projectType: projectDirectory,
-    loaderDir: `${offset}../dist/${root}/loader`,
+    loaderDir: getProjectTsImportPath(tree, projectName),
+    useWebpack5: true,
   });
 }
 
@@ -137,7 +163,12 @@ export function createRootStorybookDir(tree: Tree) {
     return;
   }
   const templatePath = join(__dirname, './root-files');
-  generateFiles(tree, templatePath, '', { dot: '.' });
+  generateFiles(tree, templatePath, '', {
+    tmpl: '',
+    dot: '.',
+    rootTsConfigPath: getRootTsConfigPathInTree(tree),
+    useWebpack5: true,
+  });
 }
 
 function configureTsProjectConfig(
@@ -174,22 +205,22 @@ function configureTsProjectConfig(
   writeJson(tree, tsConfigPath, tsConfigContent);
 }
 
-function configureTsSolutionConfig(
-  tree: Tree,
-  schema: StorybookConfigureSchema
-) {
-  const { name: projectName } = schema;
-
-  const { root } = readProjectConfiguration(tree, projectName);
-  const tsConfigPath = join(root, 'tsconfig.json');
+function configureTsSolutionConfig(tree: Tree) {
+  const tsConfigPath = getRootTsConfigPathInTree(tree);
   const tsConfigContent = readJson<TsConfig>(tree, tsConfigPath);
 
-  tsConfigContent.references = [
-    ...(tsConfigContent.references || []),
-    {
-      path: './.storybook/tsconfig.json',
-    },
-  ];
+  if (
+    !tsConfigContent.references
+      ?.map((reference) => reference.path)
+      ?.includes('./.storybook/tsconfig.json')
+  ) {
+    tsConfigContent.references = [
+      ...(tsConfigContent.references || []),
+      {
+        path: './.storybook/tsconfig.json',
+      },
+    ];
+  }
 
   writeJson(tree, tsConfigPath, tsConfigContent);
 }
@@ -201,7 +232,7 @@ function addStorybookTask(
 ) {
   const projectConfig = readProjectConfiguration(tree, projectName);
   projectConfig.targets['storybook'] = {
-    executor: '@nrwl/workspace:run-commands',
+    executor: 'nx:run-commands',
     options: {
       commands: [
         `nx run ${projectName}:serve`,
@@ -211,7 +242,7 @@ function addStorybookTask(
     },
   };
   projectConfig.targets['serve-storybook'] = {
-    executor: '@nrwl/storybook:storybook',
+    executor: '@nx/storybook:storybook',
     options: {
       uiFramework,
       port: 4400,
@@ -226,7 +257,7 @@ function addStorybookTask(
     },
   };
   projectConfig.targets['build-storybook'] = {
-    executor: '@nrwl/storybook:build',
+    executor: '@nx/storybook:build',
     outputs: ['{options.outputPath}'],
     options: {
       uiFramework,

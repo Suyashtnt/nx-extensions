@@ -1,6 +1,6 @@
 {
   "name": "@nxext/solid",
-  "version": "14.0.0",
+  "version": "16.5.0",
   "license": "MIT",
   "author": "Kristian Mandrup",
   "description": "Nx plugin for solid",
@@ -20,17 +20,15 @@
     "url": "https://github.com/nxext/nx-extensions/issues"
   },
   "main": "src/index.js",
-  "schematics": "./generators.json",
+  "generators": "./generators.json",
   "dependencies": {
-    "@nxext/vite": "^14.0.0",
-    "@nrwl/devkit": "^14.0.3"
+    "@nx/devkit": "^16.4.0"
   },
   "peerDependencies": {
-    "solid-js": "^1.2.5",
-    "@nrwl/workspace": "^14.0.3",
-    "@nrwl/cypress": "^14.0.3",
-    "@nrwl/linter": "^14.0.3",
-    "@nxext/vite": "^14.0.0"
+    "solid-js": "^1.6.0",
+    "@nx/workspace": "^16.5.0",
+    "@nx/linter": "^16.5.0",
+    "@nx/cypress": "^16.5.0"
   },
   "nx-migrate": {
     "migrations": "./migrations.json"

@@ -2,15 +2,15 @@ import {
   addDependenciesToPackageJson,
   applyChangesToString,
   convertNxGenerator,
+  ensurePackage,
   getWorkspaceLayout,
   joinPathFragments,
+  NX_VERSION,
   readProjectConfiguration,
   Tree,
-} from '@nrwl/devkit';
+} from '@nx/devkit';
 import { AddOutputtargetSchematicSchema } from '../schema';
 import { STENCIL_OUTPUTTARGET_VERSION } from '../../../utils/versions';
-import { addImport, insertImport } from '../../../utils/ast-utils';
-import { addGlobal } from '@nrwl/workspace/src/utilities/ast-utils';
 import { addToGitignore } from '../../../utils/utillities';
 import { calculateStencilSourceOptions } from '../lib/calculate-stencil-source-options';
 import * as ts from 'typescript';
@@ -22,6 +22,9 @@ import {
   addDeclarationToModule,
   addExportToModule,
 } from '../../../utils/angular-ast-utils';
+import { getProjectTsImportPath } from '../../storybook-configuration/generator';
+import { addAfterLastImport, addImport } from '../../../utils/ast-utils';
+import { addGlobal } from '@nx/js';
 
 async function prepareAngularLibrary(
   host: Tree,
@@ -30,7 +33,8 @@ async function prepareAngularLibrary(
   const angularProjectName = `${options.projectName}-angular`;
   const { libsDir } = getWorkspaceLayout(host);
 
-  const generators = await import('@nrwl/angular/generators');
+  await ensurePackage('@nx/angular', NX_VERSION);
+  const generators = await import('@nx/angular/generators');
   const libraryTarget = await generators.libraryGenerator(host, {
     name: angularProjectName,
     skipFormat: true,
@@ -120,13 +124,6 @@ function addLibraryDirectives(
     ScriptTarget.Latest,
     true
   );
-  sourceFile = insertImport(
-    host,
-    sourceFile,
-    modulePath,
-    'DIRECTIVES',
-    '../generated/directives'
-  );
   sourceFile = addDeclarationToModule(
     host,
     sourceFile,
@@ -134,7 +131,23 @@ function addLibraryDirectives(
     '...DIRECTIVES'
   );
   sourceFile = addExportToModule(host, sourceFile, modulePath, '...DIRECTIVES');
-  host.write(modulePath, sourceFile.getFullText());
+
+  const changes = applyChangesToString(sourceFile.getFullText(), [
+    ...addImport(
+      sourceFile,
+      `import { DIRECTIVES } from '../generated/directives';`
+    ),
+    ...addImport(
+      sourceFile,
+      `import { defineCustomElements} from '${getProjectTsImportPath(
+        host,
+        options.projectName
+      )}/loader';`
+    ),
+    addAfterLastImport(sourceFile, `\ndefineCustomElements();\n`),
+  ]);
+
+  host.write(modulePath, changes);
 }
 
 export async function addAngularGenerator(

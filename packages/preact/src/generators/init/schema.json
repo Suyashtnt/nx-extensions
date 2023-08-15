@@ -3,13 +3,12 @@
   "$id": "Init",
   "title": "",
   "type": "object",
-  "cli": "nx",
   "properties": {
     "unitTestRunner": {
       "description": "Adds the specified unit test runner.",
       "type": "string",
-      "enum": ["jest", "none"],
-      "default": "jest"
+      "enum": ["vitest", "jest", "none"],
+      "default": "vitest"
     },
     "e2eTestRunner": {
       "description": "Adds the specified e2e test runner.",

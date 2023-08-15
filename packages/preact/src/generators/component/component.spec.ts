@@ -1,8 +1,8 @@
 import componentGenerator, { PreactComponentSchema } from './component';
 import { createTestProject } from '../utils/testing';
-import { ProjectType } from '@nrwl/workspace';
-import { uniq } from '@nrwl/nx-plugin/testing';
-import { names, Tree } from '@nrwl/devkit';
+import { ProjectType } from '@nx/workspace';
+import { uniq } from '@nx/plugin/testing';
+import { names, Tree } from '@nx/devkit';
 
 describe('component schematic', () => {
   let tree: Tree;

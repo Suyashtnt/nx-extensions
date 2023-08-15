@@ -3,7 +3,6 @@
   "$id": "AddOutputtarget",
   "title": "",
   "type": "object",
-  "cli": "nx",
   "properties": {
     "projectName": {
       "type": "string",

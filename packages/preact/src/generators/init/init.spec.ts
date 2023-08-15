@@ -1,36 +1,24 @@
 import { Schema } from './schema';
 import { initGenerator } from './init';
-import { readJson } from '@nrwl/devkit';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+import { readJson, Tree } from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 
 describe('init schematic', () => {
-  let tree;
+  let host: Tree;
   const options: Schema = {
     skipFormat: true,
-    unitTestRunner: 'jest',
+    unitTestRunner: 'vitest',
     e2eTestRunner: 'cypress',
   };
 
   beforeEach(() => {
-    tree = createTreeWithEmptyWorkspace();
-    tree.overwrite(
-      'package.json',
-      `
-      {
-        "name": "test-name",
-        "dependencies": {},
-        "devDependencies": {
-          "@nrwl/workspace": "0.0.0"
-        }
-      }
-    `
-    );
+    host = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
   });
 
   it('should add Preact dependencies', async () => {
-    await initGenerator(tree, options);
+    await initGenerator(host, options);
 
-    const packageJson = readJson(tree, 'package.json');
+    const packageJson = readJson(host, 'package.json');
     expect(packageJson.devDependencies['preact']).toBeDefined();
   });
 });

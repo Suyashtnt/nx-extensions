@@ -2,16 +2,23 @@ import {
   addDependenciesToPackageJson,
   joinPathFragments,
   Tree,
-} from '@nrwl/devkit';
-import { lintProjectGenerator } from '@nrwl/linter';
+  runTasksInSerial,
+  NX_VERSION,
+  ensurePackage,
+} from '@nx/devkit';
 import { extraEslintDependencies } from '../../utils/lint';
-import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
 import { NormalizedSchema } from '../schema';
 
 export async function addLinting(host: Tree, options: NormalizedSchema) {
-  if(options.linter === 'none') {
-    return runTasksInSerial();
+  if (options.linter === 'none') {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    return () => {};
   }
+
+  const { lintProjectGenerator } = ensurePackage<typeof import('@nx/linter')>(
+    '@nx/linter',
+    NX_VERSION
+  );
 
   const lintTask = await lintProjectGenerator(host, {
     linter: options.linter,

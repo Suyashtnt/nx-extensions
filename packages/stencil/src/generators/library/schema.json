@@ -3,7 +3,6 @@
   "$id": "Nxext-Library",
   "title": "",
   "type": "object",
-  "cli": "nx",
   "properties": {
     "name": {
       "type": "string",
@@ -55,7 +54,7 @@
     "linter": {
       "description": "The tool to use for running lint checks.",
       "type": "string",
-      "enum": ["eslint", "tslint"],
+      "enum": ["eslint", "none"],
       "default": "eslint"
     },
     "component": {

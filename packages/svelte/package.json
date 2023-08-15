@@ -1,6 +1,6 @@
 {
   "name": "@nxext/svelte",
-  "version": "14.0.0",
+  "version": "16.5.0",
   "license": "MIT",
   "author": "Dominik Pieper",
   "description": "Nx plugin for Svelte",
@@ -19,28 +19,20 @@
   "bugs": {
     "url": "https://github.com/nxext/nx-extensions/issues"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "schematics": "./generators.json",
   "peerDependencies": {
-    "svelte": "^3.44.2",
-    "svelte-preprocess": "^4.4.2",
-    "@nrwl/workspace": "^14.0.3",
-    "@nrwl/cypress": "^14.0.3",
-    "@nrwl/linter": "^14.0.3",
-    "@nxext/vitest": "^14.0.0"
+    "svelte": "^3.47.0",
+    "svelte-preprocess": "^5.0.4",
+    "@nx/workspace": "^16.5.0",
+    "@nx/linter": "^16.5.0",
+    "@nx/cypress": "^16.5.0"
   },
   "dependencies": {
-    "@nxext/vite": "^14.0.0",
-    "@nrwl/devkit": "^14.0.3",
-    "@nrwl/cypress": "^14.0.3",
-    "@nrwl/jest": "^14.0.3",
-    "@nxext/vitest": "^14.0.0"
-  },
-  "nx-migrate": {
-    "migrations": "./migrations.json"
-  },
-  "nx-migrations": {
-    "migrations": "./migrations.json"
+    "@nx/devkit": "^16.5.0"
   }
 }

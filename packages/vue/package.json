@@ -1,0 +1,27 @@
+{
+  "name": "@nxext/vue",
+  "version": "16.5.0-Beta.3",
+  "license": "MIT",
+  "author": "Dominik Pieper",
+  "description": "Nx plugin for Vue",
+  "homepage": "https://nxext.dev/",
+  "keywords": [
+    "vite",
+    "vitest",
+    "vue"
+  ],
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/nxext/nx-extensions"
+  },
+  "bugs": {
+    "url": "https://github.com/nxext/nx-extensions/issues"
+  },
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
+  "generators": "./generators.json",
+  "dependencies": {
+    "@nx/devkit": "^16.5.0",
+    "@nx/js": "^16.5.0"
+  }
+}

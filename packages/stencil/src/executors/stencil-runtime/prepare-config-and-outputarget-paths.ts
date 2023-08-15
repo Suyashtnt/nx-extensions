@@ -5,8 +5,8 @@ import {
   createDirectory,
   fileExists,
   copyFile,
-} from '@nrwl/workspace/src/utilities/fileutils';
-import { joinPathFragments, writeJsonFile } from '@nrwl/devkit';
+} from '@nx/workspace/src/utilities/fileutils';
+import { joinPathFragments, writeJsonFile } from '@nx/devkit';
 import { existsSync } from 'fs';
 import type { Config } from '@stencil/core/compiler';
 

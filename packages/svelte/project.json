@@ -1,11 +1,12 @@
 {
-  "root": "packages/svelte",
+  "name": "svelte",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/svelte/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "packages/svelte/**/*.ts",
@@ -13,25 +14,29 @@
           "packages/svelte/**/*.spec.tsx",
           "packages/svelte/**/*.spec.js",
           "packages/svelte/**/*.spec.jsx",
-          "packages/svelte/**/*.d.ts"
+          "packages/svelte/**/*.d.ts",
+          "packages/svelte/generators.json",
+          "packages/svelte/package.json",
+          "packages/svelte/migrations.json"
         ]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "packages/svelte/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/packages/svelte"]
+      "outputs": ["{workspaceRoot}/coverage/packages/svelte"]
     },
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nx/js:tsc",
       "options": {
         "outputPath": "dist/packages/svelte",
         "tsConfig": "packages/svelte/tsconfig.lib.json",
         "packageJson": "packages/svelte/package.json",
         "main": "packages/svelte/src/index.ts",
+        "updateBuildableProjectDepsInPackageJson": false,
         "assets": [
           "packages/svelte/*.md",
           {
@@ -65,9 +70,13 @@
       "dependsOn": [
         {
           "target": "build",
-          "projects": "dependencies"
+          "dependencies": true
         }
       ]
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs svelte {args.ver} {args.tag}",
+      "dependsOn": ["build"]
     }
   },
   "tags": []

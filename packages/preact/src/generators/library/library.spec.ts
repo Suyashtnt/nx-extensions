@@ -1,11 +1,11 @@
 import { PreactLibrarySchema } from './schema';
-import { Linter } from '@nrwl/linter';
-import { readJson } from '@nrwl/devkit';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+import { Linter } from '@nx/linter';
+import { readJson } from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { libraryGenerator } from './library';
 
 describe('preact library schematic', () => {
-  let tree;
+  let host;
   const options: PreactLibrarySchema = {
     name: 'test',
     linter: Linter.EsLint,
@@ -15,42 +15,30 @@ describe('preact library schematic', () => {
   };
 
   beforeEach(() => {
-    tree = createTreeWithEmptyWorkspace();
-    tree.overwrite(
-      'package.json',
-      `
-      {
-        "name": "test-name",
-        "dependencies": {},
-        "devDependencies": {
-          "@nrwl/workspace": "0.0.0"
-        }
-      }
-    `
-    );
+    host = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
   });
 
   it('should add preact dependencies', async () => {
-    await libraryGenerator(tree, options);
-    const packageJson = readJson(tree, 'package.json');
+    await libraryGenerator(host, options);
+    const packageJson = readJson(host, 'package.json');
 
     expect(packageJson.devDependencies['preact']).toBeDefined();
   });
 
   it('should add preact project files', async () => {
-    await libraryGenerator(tree, options);
+    await libraryGenerator(host, options);
 
     // expect(tree.exists(`libs/${options.name}/preact.config.cjs`)).toBeTruthy();
-    expect(tree.exists(`libs/${options.name}/tsconfig.lib.json`)).toBeTruthy();
-    expect(tree.exists(`libs/${options.name}/tsconfig.spec.json`)).toBeTruthy();
-    expect(tree.exists(`libs/${options.name}/tsconfig.json`)).toBeTruthy();
-    expect(tree.exists(`libs/${options.name}/.eslintrc.json`)).toBeFalsy();
-    expect(tree.exists(`libs/${options.name}/.eslintrc.js`)).toBeTruthy();
+    expect(host.exists(`libs/${options.name}/tsconfig.lib.json`)).toBeTruthy();
+    expect(host.exists(`libs/${options.name}/tsconfig.spec.json`)).toBeTruthy();
+    expect(host.exists(`libs/${options.name}/tsconfig.json`)).toBeTruthy();
+    expect(host.exists(`libs/${options.name}/.eslintrc.json`)).toBeFalsy();
+    expect(host.exists(`libs/${options.name}/.eslintrc.js`)).toBeTruthy();
   });
 
   it('should fail if no importPath is provided with publishable', async () => {
     try {
-      await libraryGenerator(tree, {
+      await libraryGenerator(host, {
         ...options,
         publishable: true,
       });

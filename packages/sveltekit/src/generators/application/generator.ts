@@ -1,26 +1,26 @@
 import {
   addProjectConfiguration,
   formatFiles,
-  generateFiles,
-  getWorkspaceLayout, joinPathFragments,
+  getWorkspaceLayout,
+  joinPathFragments,
   names,
-  getWorkspacePath,
-  offsetFromRoot,
-  Tree, convertNxGenerator
-} from '@nrwl/devkit';
-import * as path from 'path';
+  Tree,
+  runTasksInSerial,
+  workspaceRoot,
+} from '@nx/devkit';
 import { NormalizedSchema, SveltekitGeneratorSchema } from './schema';
-import { ProjectType } from '@nrwl/workspace';
+import { ProjectType } from '@nx/workspace';
 import { relative } from 'path';
 import { addLinting } from './lib/add-linting';
-import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
 import { installDependencies } from './lib/install-dependencies';
-
+import { addFiles } from './lib/add-project-files';
+import { createSvelteCheckTarget } from './lib/targets';
+import { addVite } from './lib/add-vite';
+import { updateViteConfig } from './lib/update-vite-config';
 function normalizeOptions(
   host: Tree,
   options: SveltekitGeneratorSchema
 ): NormalizedSchema {
-  const workspacePath = getWorkspacePath(host);
   const name = names(options.name).fileName;
   const projectDirectory = options.directory
     ? `${names(options.directory).fileName}/${name}`
@@ -30,9 +30,12 @@ function normalizeOptions(
   const parsedTags = options.tags
     ? options.tags.split(',').map((s) => s.trim())
     : [];
-  const distDir = relative(joinPathFragments(`${workspacePath}/${projectRoot}`), joinPathFragments(`${workspacePath}/dist/${projectRoot}`));
+  const distDir = relative(
+    joinPathFragments(`${workspaceRoot}/${projectRoot}`),
+    joinPathFragments(`${workspaceRoot}/dist/${projectRoot}`)
+  );
 
-  return {
+  const config = {
     ...options,
     distDir,
     projectName,
@@ -40,59 +43,49 @@ function normalizeOptions(
     projectDirectory,
     parsedTags,
   };
+
+  return config;
 }
 
-function addFiles(host: Tree, options: NormalizedSchema) {
-  const templateOptions = {
-    ...options,
-    ...names(options.name),
-    offsetFromRoot: offsetFromRoot(options.projectRoot),
-    template: '',
-  };
-  generateFiles(
-    host,
-    path.join(__dirname, 'files'),
-    options.projectRoot,
-    templateOptions
-  );
-}
-
-export async function applicationGenerator(host: Tree, schema: SveltekitGeneratorSchema) {
-  const options = normalizeOptions(host, schema);
-  addProjectConfiguration(host, options.projectName, {
-    root: options.projectRoot,
-    projectType: ProjectType.Application,
-    sourceRoot: `${options.projectRoot}/src`,
-    targets: {
-      build: {
-        executor: '@nxext/sveltekit:sveltekit',
-        options: {
-          command: 'build'
-        }
-      },
-      serve: {
-        executor: '@nxext/sveltekit:sveltekit',
-        options: {
-          command: 'dev'
-        }
-      },
+export async function applicationGenerator(
+  host: Tree,
+  schema: SveltekitGeneratorSchema
+) {
+  try {
+    const options = normalizeOptions(host, schema);
+    // const optStr = JSON.stringify(options, null, 2);
+    // throw new Error(optStr);
+    const targets = {
+      check: createSvelteCheckTarget(options),
       add: {
         executor: '@nxext/sveltekit:add',
-      }
-    },
-    tags: options.parsedTags,
-  });
-  addFiles(host, options);
-  const lintTask = await addLinting(host, options);
+      },
+    };
 
-  if(!options.skipFormat) {
-    await formatFiles(host);
+    addProjectConfiguration(host, options.projectName, {
+      root: options.projectRoot,
+      projectType: ProjectType.Application,
+      sourceRoot: `${options.projectRoot}/src`,
+      targets: targets,
+      tags: options.parsedTags,
+    });
+    addFiles(host, options);
+
+    const lintTask = await addLinting(host, options);
+    const viteTask = await addVite(host, options);
+
+    updateViteConfig(host, options);
+
+    if (!options.skipFormat) {
+      await formatFiles(host);
+    }
+
+    const installTask = installDependencies(host);
+
+    return runTasksInSerial(installTask, viteTask, lintTask);
+  } catch (e) {
+    throw new Error(e);
   }
-
-  const installTask = installDependencies(host);
-
-  return runTasksInSerial(installTask, lintTask);
 }
 
 export default applicationGenerator;
-export const applicationSchematic = convertNxGenerator(applicationGenerator);

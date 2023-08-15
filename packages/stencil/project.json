@@ -1,11 +1,12 @@
 {
-  "root": "packages/stencil",
+  "name": "stencil",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/stencil/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "packages/stencil/**/*.ts",
@@ -13,25 +14,30 @@
           "packages/stencil/**/*.spec.tsx",
           "packages/stencil/**/*.spec.js",
           "packages/stencil/**/*.spec.jsx",
-          "packages/stencil/**/*.d.ts"
+          "packages/stencil/**/*.d.ts",
+          "packages/stencil/generators.json",
+          "packages/stencil/executors.json",
+          "packages/stencil/package.json",
+          "packages/stencil/migrations.json"
         ]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "packages/stencil/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/packages/stencil"]
+      "outputs": ["{workspaceRoot}/coverage/packages/stencil"]
     },
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nx/js:tsc",
       "options": {
         "outputPath": "dist/packages/stencil",
         "tsConfig": "packages/stencil/tsconfig.lib.json",
         "packageJson": "packages/stencil/package.json",
         "main": "packages/stencil/src/index.ts",
+        "updateBuildableProjectDepsInPackageJson": false,
         "assets": [
           "packages/stencil/*.md",
           {
@@ -76,9 +82,13 @@
       "dependsOn": [
         {
           "target": "build",
-          "projects": "dependencies"
+          "dependencies": true
         }
       ]
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs stencil {args.ver} {args.tag}",
+      "dependsOn": ["build"]
     }
   },
   "tags": []

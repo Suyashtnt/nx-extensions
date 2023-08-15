@@ -1,14 +1,14 @@
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
-import { Tree } from '@nrwl/devkit';
-import { Linter } from '@nrwl/linter';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { Tree } from '@nx/devkit';
+import { Linter } from '@nx/linter';
 import applicationGenerator from '../application/generator';
 
 export async function createTestProject(
   name: string,
-  unitTestrunner: 'none' | 'jest' = 'none',
+  unitTestrunner: 'none' | 'vitest' = 'none',
   e2eTestrunner: 'none' | 'cypress' = 'none'
 ): Promise<Tree> {
-  const tree = createTreeWithEmptyWorkspace();
+  const tree = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
   tree.write(
     'package.json',
     `
@@ -16,7 +16,7 @@ export async function createTestProject(
         "name": "test-name",
         "dependencies": {},
         "devDependencies": {
-          "@nrwl/workspace": "0.0.0"
+          "@nx/workspace": "0.0.0"
         }
       }
     `
@@ -25,7 +25,8 @@ export async function createTestProject(
   await applicationGenerator(tree, {
     name: name,
     linter: Linter.EsLint,
-    skipFormat: false
+    skipFormat: false,
+    unitTestRunner: unitTestrunner,
   });
 
   return tree;

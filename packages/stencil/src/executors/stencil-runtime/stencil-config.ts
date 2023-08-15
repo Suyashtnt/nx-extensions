@@ -1,18 +1,16 @@
+import { ConfigFlags, Logger, TaskCommand } from '@stencil/core/cli';
 import {
   CompilerSystem,
-  ConfigFlags,
-  Logger,
-  TaskCommand,
-} from '@stencil/core/cli';
-import { createNodeLogger, createNodeSys } from '@stencil/core/sys/node';
+  createNodeLogger,
+  createNodeSys,
+} from '@stencil/core/sys/node';
 import { loadConfig } from '@stencil/core/compiler';
 import { PathCollection } from './types';
-import { ExecutorContext, readJsonFile } from '@nrwl/devkit';
+import { ExecutorContext } from '@nx/devkit';
 import { join } from 'path';
-import { fileExists } from '@nrwl/workspace/src/utilities/fileutils';
 import { normalizePath } from '../../utils/normalize-path';
 import type { Config } from '@stencil/core/compiler';
-import { hasError } from '../../utils/utillities';
+import { ValidatedConfig } from '@stencil/core/internal';
 
 function getCompilerExecutingPath(): string {
   return require.resolve('@stencil/core/compiler');
@@ -30,11 +28,10 @@ export async function initializeStencilConfig<
   taskCommand: TaskCommand,
   options: T,
   context: ExecutorContext,
-  flags: ConfigFlags,
-  dependencies = []
+  flags: ConfigFlags
 ): Promise<{
   pathCollection: PathCollection;
-  loadedConfig: Config;
+  strictConfig: Config;
 }> {
   const logger: Logger = createNodeLogger({ process });
   const sys: CompilerSystem = createNodeSys({ process });
@@ -70,43 +67,21 @@ export async function initializeStencilConfig<
     sys,
   });
   const loadedConfig = loadConfigResults.config;
+  const strictConfig: ValidatedConfig = {
+    ...loadedConfig,
+    flags: flags,
+    logger,
+    outputTargets: loadedConfig.outputTargets ?? [],
+    rootDir: loadedConfig.rootDir ?? '/',
+    sys: sys ?? loadedConfig.sys,
+    testing: loadedConfig.testing ?? {},
+  };
 
-  if (loadedConfig.flags.task === 'build') {
-    loadedConfig.rootDir = distDir;
-    loadedConfig.packageJsonFilePath = normalizePath(
+  if (strictConfig.flags.task === 'build') {
+    strictConfig.rootDir = distDir;
+    strictConfig.packageJsonFilePath = normalizePath(
       join(distDir, 'package.json')
     );
-  }
-  dependencies = dependencies
-    .filter((dep) => dep.node.type == 'lib')
-    .map((dep) => {
-      const pkgJsonPath = `${dep.outputs[0]}/package.json`;
-      if (fileExists(pkgJsonPath)) {
-        const pkgJson = readJsonFile(pkgJsonPath);
-        return {
-          name: pkgJson.name,
-          version: pkgJson.name,
-          main: pkgJson.main,
-        };
-      }
-    });
-
-  await sys.ensureResources({
-    rootDir: loadedConfig.rootDir,
-    logger,
-    dependencies: dependencies as any,
-  });
-
-  const ensureDepsResults = await sys.ensureDependencies({
-    rootDir: loadedConfig.rootDir,
-    logger,
-    dependencies: dependencies as any,
-  });
-
-  logger.printDiagnostics(ensureDepsResults.diagnostics);
-  if (hasError(ensureDepsResults.diagnostics)) {
-    logger.printDiagnostics(ensureDepsResults.diagnostics);
-    await sys.exit(1);
   }
 
   return {
@@ -116,6 +91,6 @@ export async function initializeStencilConfig<
       distDir: distDir,
       pkgJson: join(projectRoot, 'package.json'),
     },
-    loadedConfig: loadedConfig,
+    strictConfig: strictConfig,
   };
 }

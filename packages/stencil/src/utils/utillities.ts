@@ -1,5 +1,5 @@
 import ignore from 'ignore';
-import { Tree } from '@nrwl/devkit';
+import { readJson, Tree } from '@nx/devkit';
 import type { Diagnostic } from '@stencil/core/compiler';
 import { SupportedStyles } from '../stencil-core-utils';
 
@@ -32,32 +32,10 @@ export function addToGitignore(host: Tree, path: string) {
   }
 }
 
-export function isStencilProject(
-  project: any
-): boolean {
-  return ['build', 'test', 'serve', 'e2e'].map(command => {
-    const target =
-      project.targets && project.targets[command]
-        ? project.targets[command]
-        : {};
-    return (
-      target &&
-      target.executor === `@nxext/stencil:${command}`
-    );
-  }).some(value => value === true);
-}
-
-export function isBuildableStencilProject(
-  project: any
-): boolean {
+export function isBuildableStencilProject(project: any): boolean {
   const target =
-    project.targets && project.targets['build']
-      ? project.targets['build']
-      : {};
-  return (
-    target &&
-    target.executor === `@nxext/stencil:build`
-  );
+    project.targets && project.targets['build'] ? project.targets['build'] : {};
+  return target && target.executor === `@nxext/stencil:build`;
 }
 
 export const hasError = (diagnostics: Diagnostic[]): boolean => {
@@ -66,3 +44,17 @@ export const hasError = (diagnostics: Diagnostic[]): boolean => {
   }
   return diagnostics.some((d) => d.level === 'error' && d.type !== 'runtime');
 };
+
+export function readNxVersion(host: Tree): string {
+  const packageJson = readJson(host, 'package.json');
+
+  const nxVersion = packageJson.devDependencies['@nx/workspace']
+    ? packageJson.devDependencies['@nx/workspace']
+    : packageJson.dependencies['@nx/workspace'];
+
+  if (!nxVersion) {
+    throw new Error('@nx/workspace is not a dependency.');
+  }
+
+  return nxVersion;
+}

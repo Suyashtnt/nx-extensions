@@ -1,18 +1,17 @@
-import { readWorkspaceJson } from '@nrwl/workspace';
-import {
-  existsSync,
-  lstatSync,
-  copySync,
-  renameSync,
-} from 'fs-extra';
+import { existsSync, lstatSync, copySync, renameSync } from 'fs-extra';
+import { workspaceRoot } from '@nx/devkit';
+import { Workspaces } from 'nx/src/config/workspaces';
 
-export function getPublishableLibNames(workspaceJson = readWorkspaceJson()) {
+export function getPublishableLibNames(
+  workspaceJson = new Workspaces(workspaceRoot).readWorkspaceConfiguration()
+) {
   const { projects } = workspaceJson;
 
   return Object.keys(projects).filter(
     (key) =>
       projects[key].projectType === 'library' &&
-      projects[key].targets?.build?.executor === '@nrwl/js:tsc'
+      projects[key].targets?.build?.executor === '@nx/js:tsc' &&
+      projects[key].sourceRoot !== 'e2e/e2e/src'
   );
 }
 

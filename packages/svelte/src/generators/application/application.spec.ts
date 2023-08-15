@@ -1,32 +1,20 @@
 import { SvelteApplicationSchema } from './schema';
-import { Linter } from '@nrwl/linter';
+import { Linter } from '@nx/linter';
 import applicationGenerator from './application';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
-import { readJson } from '@nrwl/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { readJson } from '@nx/devkit';
 
 describe('svelte app generator', () => {
   let tree;
   const options: SvelteApplicationSchema = {
-    name: 'test',
+    name: 'my-app',
     linter: Linter.EsLint,
     unitTestRunner: 'jest',
     e2eTestRunner: 'cypress',
   };
 
   beforeEach(() => {
-    tree = createTreeWithEmptyWorkspace();
-    tree.overwrite(
-      'package.json',
-      `
-      {
-        "name": "test-name",
-        "dependencies": {},
-        "devDependencies": {
-          "@nrwl/workspace": "0.0.0"
-        }
-      }
-    `
-    );
+    tree = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
   });
 
   describe('Vite bundle', () => {
@@ -73,13 +61,30 @@ describe('svelte app generator', () => {
       ).toBeTruthy();
     });
 
-    it('should add vitest specific files', async () => {
+    it('should add vite types to tsconfigs', async () => {
       await applicationGenerator(tree, {
         ...options,
         unitTestRunner: 'vitest',
       });
-
-      expect(tree.exists(`apps/${options.name}/vitest.config.ts`)).toBeTruthy();
+      const tsconfigApp = readJson(
+        tree,
+        `apps/${options.name}/tsconfig.app.json`
+      );
+      expect(tsconfigApp.compilerOptions.types).toEqual([
+        'svelte',
+        'node',
+        'vite/client',
+      ]);
+      const tsconfigSpec = readJson(
+        tree,
+        `apps/${options.name}/tsconfig.spec.json`
+      );
+      expect(tsconfigSpec.compilerOptions.types).toEqual([
+        'vitest/globals',
+        'vitest/importMeta',
+        'vite/client',
+        'node',
+      ]);
     });
   });
 });

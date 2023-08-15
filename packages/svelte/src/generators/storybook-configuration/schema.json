@@ -1,6 +1,5 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "cli": "nx",
   "$id": "NxStorybookConfigure",
   "type": "object",
   "properties": {
@@ -24,7 +23,7 @@
     "linter": {
       "description": "The tool to use for running lint checks.",
       "type": "string",
-      "enum": ["eslint", "tslint", "none"],
+      "enum": ["eslint", "none"],
       "default": "eslint"
     },
     "js": {
@@ -35,6 +34,15 @@
     "standaloneConfig": {
       "description": "Split the project configuration into `<projectRoot>/project.json` rather than including it inside workspace.json",
       "type": "boolean"
+    },
+    "tsConfiguration": {
+      "type": "boolean",
+      "description": "Configure your project with TypeScript. Generate main.ts and preview.ts files, instead of main.js and preview.js.",
+      "default": false
+    },
+    "configureTestRunner": {
+      "type": "boolean",
+      "description": "Add a Storybook Test-Runner target."
     }
   },
   "required": ["name"]

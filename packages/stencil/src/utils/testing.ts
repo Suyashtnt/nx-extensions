@@ -1,20 +1,40 @@
 import { SupportedStyles } from '../stencil-core-utils';
-import { Tree } from '@nrwl/devkit';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+import {
+  readWorkspaceConfiguration,
+  Tree,
+  updateJson,
+  updateWorkspaceConfiguration,
+} from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { libraryGenerator } from '../generators/library/generator';
 import { ProjectType } from './typings';
+
+/**
+ * The value of `npmScope` in an nx.json file
+ */
+export const testNpmScope = 'test-workspace';
 
 export async function createTestUILib(
   libName: string,
   style: SupportedStyles = SupportedStyles.css,
   buildable = true
 ): Promise<Tree> {
-  const host = createTreeWithEmptyWorkspace();
+  const host = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
+  updateJson(host, '/package.json', (json) => {
+    json.devDependencies = {
+      '@nx/workspace': '15.7.0',
+    };
+    return json;
+  });
+  const workspaceConfiguration = readWorkspaceConfiguration(host);
+  workspaceConfiguration.npmScope = testNpmScope;
+  updateWorkspaceConfiguration(host, workspaceConfiguration);
+
   await libraryGenerator(host, {
     name: libName,
     style: style,
     buildable,
-    publishable: false
+    publishable: false,
   });
 
   return host;

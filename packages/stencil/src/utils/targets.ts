@@ -1,4 +1,4 @@
-import { TargetConfiguration } from '@nrwl/devkit';
+import { TargetConfiguration } from '@nx/devkit';
 import { LibrarySchema } from '../generators/library/schema';
 import { PWASchema } from '../generators/ionic-pwa/schema';
 import { ApplicationSchema } from '../generators/application/schema';
@@ -38,14 +38,14 @@ export function getBuildTarget(
       projectType,
       tsConfig: `${options.projectRoot}/tsconfig.${tsconfigAddition}.json`,
       configPath: `${options.projectRoot}/stencil.config.ts`,
-      outputPath: `dist/${options.projectRoot}`
+      outputPath: `dist/${options.projectRoot}`,
     },
     configurations: {
       production: {
         dev: false,
-        prod: true
-      }
-    }
+        prod: true,
+      },
+    },
   };
 }
 
@@ -65,8 +65,8 @@ export function getTestTarget(
       projectType,
       tsConfig: `${options.projectRoot}/tsconfig.${tsconfigAddition}.json`,
       configPath: `${options.projectRoot}/stencil.config.ts`,
-      outputPath: `dist/${options.projectRoot}`
-    }
+      outputPath: `dist/${options.projectRoot}`,
+    },
   };
 }
 
@@ -86,8 +86,8 @@ export function getE2eTarget(
       projectType,
       tsConfig: `${options.projectRoot}/tsconfig.${tsconfigAddition}.json`,
       configPath: `${options.projectRoot}/stencil.config.ts`,
-      outputPath: `dist/${options.projectRoot}`
-    }
+      outputPath: `dist/${options.projectRoot}`,
+    },
   };
 }
 
@@ -107,8 +107,8 @@ export function getServeTarget(
       projectType,
       tsConfig: `${options.projectRoot}/tsconfig.${tsconfigAddition}.json`,
       configPath: `${options.projectRoot}/stencil.config.ts`,
-      outputPath: `dist/${options.projectRoot}`
-    }
+      outputPath: `dist/${options.projectRoot}`,
+    },
   };
 }
 
@@ -117,7 +117,7 @@ export function getLintTarget(
   projectRoot: string
 ): TargetConfiguration {
   return {
-    executor: '@nrwl/linter:eslint',
+    executor: '@nx/linter:eslint',
     outputs: ['{options.outputFile}'],
     options: {
       lintFilePatterns: `${projectRoot}/**/*.{ts,tsx}`,

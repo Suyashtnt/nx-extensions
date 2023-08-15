@@ -1,11 +1,12 @@
 {
-  "root": "packages/preact",
+  "name": "preact",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/preact/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "packages/preact/**/*.ts",
@@ -13,25 +14,28 @@
           "packages/preact/**/*.spec.tsx",
           "packages/preact/**/*.spec.js",
           "packages/preact/**/*.spec.jsx",
-          "packages/preact/**/*.d.ts"
+          "packages/preact/**/*.d.ts",
+          "packages/preact/generators.json",
+          "packages/preact/package.json"
         ]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "packages/preact/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/packages/preact"]
+      "outputs": ["{workspaceRoot}/coverage/packages/preact"]
     },
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nx/js:tsc",
       "options": {
         "outputPath": "dist/packages/preact",
         "tsConfig": "packages/preact/tsconfig.lib.json",
         "packageJson": "packages/preact/package.json",
         "main": "packages/preact/src/index.ts",
+        "updateBuildableProjectDepsInPackageJson": false,
         "assets": [
           "packages/preact/*.md",
           {
@@ -62,6 +66,10 @@
         ]
       },
       "outputs": ["{options.outputPath}"]
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs preact {args.ver} {args.tag}",
+      "dependsOn": ["build"]
     }
   },
   "tags": []

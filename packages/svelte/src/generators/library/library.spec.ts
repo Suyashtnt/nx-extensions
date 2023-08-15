@@ -1,7 +1,7 @@
 import { SvelteLibrarySchema } from './schema';
-import { Linter } from '@nrwl/linter';
-import { readJson } from '@nrwl/devkit';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+import { Linter } from '@nx/linter';
+import { readJson } from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { libraryGenerator } from './library';
 
 describe('svelte library schematic', () => {
@@ -15,19 +15,7 @@ describe('svelte library schematic', () => {
   };
 
   beforeEach(() => {
-    tree = createTreeWithEmptyWorkspace();
-    tree.overwrite(
-      'package.json',
-      `
-      {
-        "name": "test-name",
-        "dependencies": {},
-        "devDependencies": {
-          "@nrwl/workspace": "0.0.0"
-        }
-      }
-    `
-    );
+    tree = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
   });
 
   it('should add Svelte dependencies', async () => {
@@ -63,12 +51,29 @@ describe('svelte library schematic', () => {
     }
   });
 
-  it('should add vitest dependencies', async () => {
-    await libraryGenerator(tree, { ...options, unitTestRunner: 'vitest' });
-    const packageJson = readJson(tree, 'package.json');
-
-    expect(tree.exists(`libs/${options.name}/vitest.config.ts`)).toBeTruthy();
-
-    expect(packageJson.devDependencies['vitest']).toBeDefined();
+  it('should add vite types to tsconfigs', async () => {
+    await libraryGenerator(tree, {
+      ...options,
+      unitTestRunner: 'vitest',
+    });
+    const tsconfigApp = readJson(
+      tree,
+      `libs/${options.name}/tsconfig.lib.json`
+    );
+    expect(tsconfigApp.compilerOptions.types).toEqual([
+      'svelte',
+      'node',
+      'vite/client',
+    ]);
+    const tsconfigSpec = readJson(
+      tree,
+      `libs/${options.name}/tsconfig.spec.json`
+    );
+    expect(tsconfigSpec.compilerOptions.types).toEqual([
+      'vitest/globals',
+      'vitest/importMeta',
+      'vite/client',
+      'node',
+    ]);
   });
 });

@@ -1,7 +1,8 @@
-import { Linter } from '@nrwl/linter';
+import { Linter } from '@nx/linter';
 
 export interface SveltekitGeneratorSchema {
   name: string;
+  unitTestRunner: 'none' | 'vitest';
   tags?: string;
   directory?: string;
   port?: number;

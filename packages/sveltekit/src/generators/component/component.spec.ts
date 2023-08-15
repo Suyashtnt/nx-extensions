@@ -1,6 +1,6 @@
 import componentGenerator, { SvelteComponentSchema } from './component';
-import { uniq } from '@nrwl/nx-plugin/testing';
-import { names, Tree } from '@nrwl/devkit';
+import { uniq } from '@nx/plugin/testing';
+import { names, Tree } from '@nx/devkit';
 import { createTestProject } from '../utils/testing';
 
 describe('component schematic', () => {
@@ -10,7 +10,7 @@ describe('component schematic', () => {
   const options: SvelteComponentSchema = {
     name: componentName,
     project: projectName,
-    unitTestRunner: 'jest',
+    unitTestRunner: 'vitest',
   };
 
   beforeEach(async () => {

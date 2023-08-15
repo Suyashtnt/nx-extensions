@@ -1,11 +1,12 @@
 {
-  "root": "packages/solid",
+  "name": "solid",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/solid/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "packages/solid/**/*.ts",
@@ -13,25 +14,28 @@
           "packages/solid/**/*.spec.tsx",
           "packages/solid/**/*.spec.js",
           "packages/solid/**/*.spec.jsx",
-          "packages/solid/**/*.d.ts"
+          "packages/solid/**/*.d.ts",
+          "packages/solid/generators.json",
+          "packages/solid/package.json"
         ]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "packages/solid/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/packages/solid"]
+      "outputs": ["{workspaceRoot}/coverage/packages/solid"]
     },
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nx/js:tsc",
       "options": {
         "outputPath": "dist/packages/solid",
         "tsConfig": "packages/solid/tsconfig.lib.json",
         "packageJson": "packages/solid/package.json",
         "main": "packages/solid/src/index.ts",
+        "updateBuildableProjectDepsInPackageJson": false,
         "assets": [
           "packages/solid/*.md",
           {
@@ -62,6 +66,10 @@
         ]
       },
       "outputs": ["{options.outputPath}"]
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs solid {args.ver} {args.tag}",
+      "dependsOn": ["build"]
     }
   },
   "tags": []

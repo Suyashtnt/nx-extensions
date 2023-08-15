@@ -1,13 +1,17 @@
-import { AddExecutorSchema } from './schema';
-import { default as runCommands } from '@nrwl/workspace/src/executors/run-commands/run-commands.impl';
 import {
   ExecutorContext,
   getPackageManagerCommand,
   joinPathFragments,
   readJsonFile,
   writeJsonFile,
-} from '@nrwl/devkit';
-import { sortObjectByKeys } from '@nrwl/workspace/src/utils/ast-utils';
+} from '@nx/devkit';
+import { sortObjectByKeys } from 'nx/src/utils/object-sort';
+import { default as runCommands } from 'nx/src/executors/run-commands/run-commands.impl';
+import { AddExecutorSchema } from './schema';
+
+const packageMap = {
+  picocss: '@picocss/pico',
+};
 
 export default async function runExecutor(
   options: AddExecutorSchema,
@@ -27,12 +31,20 @@ export default async function runExecutor(
   packageJson.devDependencies = {};
   writeJsonFile(packageJsonPath, packageJson);
 
+  const packageName = 'svelte-add';
+  const packageVersion = globalPackageJson?.devDependencies?.[
+    packageName
+  ]?.replace(/[\\~^]/g, '');
+
+  const npmPackageName = packageMap[options.package] || options.package;
+
   await runCommands(
     {
-      command: `npx svelte-add ${options.package}`,
+      command: `npx --package=${packageName}@${packageVersion} svelte-add ${npmPackageName}`,
       cwd: projectRoot,
       parallel: false,
       color: true,
+      __unparsed__: [],
     },
     context
   );
@@ -57,6 +69,7 @@ export default async function runExecutor(
       command: getPackageManagerCommand().install,
       parallel: false,
       color: true,
+      __unparsed__: [],
     },
     context
   );

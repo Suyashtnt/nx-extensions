@@ -1,4 +1,4 @@
-import { Tree } from '@nrwl/devkit';
+import { ensurePackage, NX_VERSION, Tree } from '@nx/devkit';
 import { InitSchema } from '../schema';
 
 export async function addCypress(host: Tree, options: InitSchema) {
@@ -7,6 +7,7 @@ export async function addCypress(host: Tree, options: InitSchema) {
     return () => {};
   }
 
-  const generators = await import('@nrwl/cypress');
+  await ensurePackage('@nx/cypress', NX_VERSION);
+  const generators = await import('@nx/cypress');
   return generators.cypressInitGenerator(host, {});
 }

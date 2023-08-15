@@ -1,6 +1,6 @@
 import { createTestUILib } from '../../utils/testing';
-import { uniq } from '@nrwl/nx-plugin/testing';
-import { Tree } from '@nrwl/devkit';
+import { uniq } from '@nx/plugin/testing';
+import { Tree } from '@nx/devkit';
 import { outputtargetGenerator } from './add-outputtarget';
 import { AddOutputtargetSchematicSchema } from './schema';
 
@@ -22,7 +22,7 @@ describe('add-outputtarget svelte', () => {
         "name": "test-name",
         "dependencies": {},
         "devDependencies": {
-          "@nrwl/workspace": "0.0.0"
+          "@nx/workspace": "0.0.0"
         }
       }
     `

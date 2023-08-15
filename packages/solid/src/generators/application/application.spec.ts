@@ -1,32 +1,20 @@
 import { SolidApplicationSchema } from './schema';
-import { Linter } from '@nrwl/linter';
+import { Linter } from '@nx/linter';
 import applicationGenerator from './application';
-import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
-import { Tree } from '@nrwl/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { Tree } from '@nx/devkit';
 
-describe('Solid app schematic', () => {
+describe('Solid app generator', () => {
   let tree: Tree;
   const options: SolidApplicationSchema = {
     name: 'test',
     linter: Linter.EsLint,
-    unitTestRunner: 'jest',
+    unitTestRunner: 'vitest',
     e2eTestRunner: 'cypress',
   };
 
   beforeEach(() => {
-    tree = createTreeWithEmptyWorkspace();
-    tree.write(
-      'package.json',
-      `
-      {
-        "name": "test-name",
-        "dependencies": {},
-        "devDependencies": {
-          "@nrwl/workspace": "0.0.0"
-        }
-      }
-    `
-    );
+    tree = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
   });
 
   describe('Vite bundle', () => {

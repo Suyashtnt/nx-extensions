@@ -1,6 +1,6 @@
 {
-  "projectName": "nxext",
-  "projectOwner": "Dominik Pieper",
+  "projectName": "nx-extensions",
+  "projectOwner": "nxext",
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
@@ -22,7 +22,7 @@
         "infra",
         "maintenance"
       ]
-     },
+    },
     {
       "login": "Mobiletainment",
       "name": "David Pertiller",
@@ -161,6 +161,215 @@
       "contributions": [
         "code",
         "ideas"
+      ]
+    },
+    {
+      "login": "devinshoemaker",
+      "name": "Devin Shoemaker",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1919548?v=4",
+      "profile": "https://github.com/devinshoemaker",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
+    },
+    {
+      "login": "LayZeeDK",
+      "name": "Lars Gyrup Brink Nielsen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6364586?v=4",
+      "profile": "https://dev.to/layzee",
+      "contributions": [
+        "code",
+        "infra"
+      ]
+    },
+    {
+      "login": "kryptus36",
+      "name": "kryptus36",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8608478?v=4",
+      "profile": "https://github.com/kryptus36",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "barbados-clemens",
+      "name": "Caleb Ukle",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23272162?v=4",
+      "profile": "https://github.com/barbados-clemens",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "marckassay",
+      "name": "Marc Kassay",
+      "avatar_url": "https://avatars.githubusercontent.com/u/459665?v=4",
+      "profile": "https://github.com/marckassay",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "SimonCockx",
+      "name": "SimonCockx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47859223?v=4",
+      "profile": "https://github.com/SimonCockx",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mikemosco",
+      "name": "mikemosco",
+      "avatar_url": "https://avatars.githubusercontent.com/u/85262867?v=4",
+      "profile": "https://github.com/mikemosco",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "riceboyler",
+      "name": "Jason Clark",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2243596?v=4",
+      "profile": "http://www.riceboyler.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "borgius",
+      "name": "Victor Borg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/868919?v=4",
+      "profile": "http://decisely.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "blackholegalaxy",
+      "name": "blackholegalaxy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11064123?v=4",
+      "profile": "https://github.com/blackholegalaxy",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "nitedani",
+      "name": "nitedani",
+      "avatar_url": "https://avatars.githubusercontent.com/u/67418286?v=4",
+      "profile": "https://github.com/nitedani",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ZaLiTHkA",
+      "name": "Andre Greeff",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2149312?v=4",
+      "profile": "https://github.com/ZaLiTHkA",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "sniperwolf",
+      "name": "Fabrizio Fallico",
+      "avatar_url": "https://avatars.githubusercontent.com/u/741938?v=4",
+      "profile": "https://keybase.io/sniperwolf",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Lcarv20",
+      "name": "Luís Carvalho",
+      "avatar_url": "https://avatars.githubusercontent.com/u/42584819?v=4",
+      "profile": "https://github.com/Lcarv20",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Nesci28",
+      "name": "Mark Gagnon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33325461?v=4",
+      "profile": "https://github.com/Nesci28",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mwarger",
+      "name": "Mat Warger",
+      "avatar_url": "https://avatars.githubusercontent.com/u/686823?v=4",
+      "profile": "https://mw.codes/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mcelikdev",
+      "name": "mcelikdev",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18662876?v=4",
+      "profile": "https://github.com/mcelikdev",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Brocco",
+      "name": "Mike Brocchi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1565117?v=4",
+      "profile": "https://twitter.com/Brocco",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "0scrm",
+      "name": "Oscar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/34385875?v=4",
+      "profile": "https://oscarmarion.dev/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ecstrema",
+      "name": "Rémi Marche",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35939574?v=4",
+      "profile": "https://github.com/ecstrema",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "simonflk",
+      "name": "Simon Flack",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4867329?v=4",
+      "profile": "https://github.com/simonflk",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "tieppt",
+      "name": "Tiep Phan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7151365?v=4",
+      "profile": "https://www.tiepphan.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "tehw0lf",
+      "name": "tehw0lf",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15650679?v=4",
+      "profile": "https://tehwol.fi/",
+      "contributions": [
+        "code"
       ]
     }
   ],
